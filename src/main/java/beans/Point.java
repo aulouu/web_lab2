@@ -1,3 +1,5 @@
+package beans;
+
 import java.io.Serializable;
 
 public class Point implements Serializable {
@@ -5,6 +7,8 @@ public class Point implements Serializable {
     private double y;
     private double radius;
     private boolean status;
+    private String time;
+    private long scriptTime;
 
     public Point() {
 
@@ -39,4 +43,12 @@ public class Point implements Serializable {
     public void setRadius(double radius) {
         this.radius = radius;
     }
+    public boolean getStatus(){ return status; }
+    public void setStatus(boolean status){ this.status = status; }
+    public String getTime() { return time; }
+    public void setTime(String time) { this.time = time; }
+    public long getScriptTime() { return scriptTime; }
+
+    public void setScriptTime(long scriptTime) { this.scriptTime = scriptTime; }
+
 }

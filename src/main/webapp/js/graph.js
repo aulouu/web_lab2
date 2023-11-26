@@ -45,23 +45,23 @@ function drawGraph() {
         ctx.beginPath();
         ctx.moveTo(canvas.width / 2, canvas.height / 2);  // Переходим в центр координат
         ctx.lineTo(canvas.width / 2, canvas.height / 2 - 2 * r * 20);  // Верхняя точка (0, 2r)
-        ctx.lineTo(canvas.width / 2 + r * 20, canvas.height / 2);  // Правая точка (r, 0)
+        ctx.lineTo(canvas.width / 2 - r * 20, canvas.height / 2);  // Левая точка (-r, 0)
         ctx.lineTo(canvas.width / 2, canvas.height / 2);  // Замыкаем треугольник
         ctx.fillStyle = "blue";  // Устанавливаем цвет заливки
         ctx.fill();  // Заливаем треугольник
         ctx.stroke();  // Рисуем контур треугольника
 
         ctx.beginPath();
-        ctx.arc(canvas.width / 2, canvas.height / 2, 2 * r * 20, 0.5 * Math.PI, -Math.PI); // Четверть круга
+        ctx.arc(canvas.width / 2, canvas.height / 2, 2 * r * 20, -Math.PI / 2, 0); // Четверть круга
         ctx.lineTo(canvas.width / 2, canvas.height / 2); // Соединяем с центром (0, 0)
         ctx.closePath();
         ctx.fill(); // Закрашиваем
         ctx.stroke(); // Рисуем обводку
 
-        ctx.beginPath(); // Начало новой фигуры (прямоугольника)
+        ctx.beginPath(); // Прямоугольник
         ctx.moveTo(canvas.width / 2, canvas.height / 2); // Перемещение в точку (0, 0)
-        ctx.lineTo(canvas.width / 2, canvas.height / 2 - r * 20); // Создание линии до точки (0, r)
-        ctx.lineTo(canvas.width / 2 - 2 * r * 20, canvas.height / 2 - r * 20); // Создание линии до точки (-2r, r)
+        ctx.lineTo(canvas.width / 2, canvas.height / 2 + r * 20); // Создание линии до точки (0, -r)
+        ctx.lineTo(canvas.width / 2 - 2 * r * 20, canvas.height / 2 + r * 20); // Создание линии до точки (-2r, -r)
         ctx.lineTo(canvas.width / 2 - 2 * r * 20, canvas.height / 2); //Создание линии до точки (-2r, 0)
         ctx.lineTo(canvas.width / 2, canvas.height / 2); // Замыкание фигуры, возвращение к начальной точке
         ctx.closePath(); // Закрытие фигуры
