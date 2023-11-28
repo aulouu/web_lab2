@@ -38,14 +38,6 @@ public class ControllerServlet extends HttpServlet {
         long startTime = System.nanoTime();
         results.setStartTime(startTime);  // Устанавливаем время начала в объекте Results
 
-        req.setAttribute("results", results);
-
-        if (yValue == null || rValue == null || xStr.isEmpty() || yValue.isEmpty() || rValue.isEmpty()) {
-            req.setAttribute("results", results);
-            context.getRequestDispatcher("/index.jsp").forward(req, resp);
-            return;
-        }
-
         req.setAttribute("startTime", startTime);
         req.setAttribute("results", results);
         context.getRequestDispatcher("/areaCheck").forward(req, resp);

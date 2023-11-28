@@ -74,6 +74,7 @@ export default class App {
         this.resetButton.addEventListener('click', (event) => {
             event.preventDefault();
             this.table.innerHTML = '';
+
         });
 
         this.svgElem.addEventListener('click', (event) => {

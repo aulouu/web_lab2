@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Objects;
 
 @WebServlet(name = "areaCheck", value = "/areaCheck")
 public class AreaCheckServlet extends HttpServlet {
@@ -43,6 +44,12 @@ public class AreaCheckServlet extends HttpServlet {
         Results results = (Results) req.getSession().getAttribute("results");
         if (results == null) {
             results = new Results();
+        }
+
+        if(xStr == null || yStr == null || rStr == null || xStr.isEmpty() || yStr.isEmpty() || rStr.isEmpty() || y > Y_MAX || y < Y_MIN || Double.isNaN(y)) {
+            req.getSession().setAttribute("results", results);
+            resp.sendRedirect(req.getContextPath() + "/error.jsp");
+            return;
         }
 
         long startTime = System.nanoTime();
