@@ -6,7 +6,7 @@ export default class App {
         this.submitButton = document.querySelector("input[type=submit]");
         this.resetButton = document.querySelector("input[type=reset]");
         this.table = document.getElementById('table-body');
-        this.submitButton.disabled = true;
+        this.submitButton.disabled = false;
         this.svgElem = document.querySelector("svg");
         this.selectedXValues = [];
     }
@@ -96,12 +96,6 @@ export default class App {
                 .then((data) => {
                     document.write(data);
                 });
-        });
-
-        this.resetButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            this.table.innerHTML = '';
-
         });
 
         this.svgElem.addEventListener('click', (event) => {
