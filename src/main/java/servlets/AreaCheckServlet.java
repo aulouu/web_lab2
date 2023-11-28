@@ -17,14 +17,14 @@ import java.util.Locale;
 
 @WebServlet(name = "areaCheck", value = "/areaCheck")
 public class AreaCheckServlet extends HttpServlet {
-
+    //Results results;
     private static final double X_MIN = -5, X_MAX = 3;
     private static final double Y_MIN = -3, Y_MAX = 3;
     private static final double R_MIN = 1, R_MAX = 5;
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ServletContext context = getServletContext();
+//        ServletContext context = getServletContext();
         String xStr = req.getParameter("x");
         String yStr = req.getParameter("y");
         String rStr = req.getParameter("r");
@@ -42,7 +42,12 @@ public class AreaCheckServlet extends HttpServlet {
         // Разбиваем строку xStr на массив значений xValues
         String[] xValues = xStr.split(",");
 
-        Results results = (Results) context.getAttribute("results");
+//        Results results = (Results) context.getAttribute("results");
+        Results results = (Results) req.getSession().getAttribute("results");
+//        if (results == null) {
+//            results = new Results();
+//            req.getSession().setAttribute("results", results);
+//        }
 
         long startTime = System.nanoTime();
         // Проходим по каждому значению x
@@ -67,10 +72,16 @@ public class AreaCheckServlet extends HttpServlet {
             results.addHit(hit);
         }
 
-        req.setAttribute("results", results);
-        context.getRequestDispatcher("/result.jsp").forward(req, resp);
+        if (results == null) {
+            results = new Results();
+            req.getSession().setAttribute("results", results);
+        }
+        resp.sendRedirect(req.getContextPath() + "/result");
+//        req.setAttribute("results", results);
+//        context.getRequestDispatcher("/result.jsp").forward(req, resp);
     }
-        private boolean isHit ( double x, double y, double r){
+
+    private boolean isHit (double x, double y, double r){
             if (x > X_MAX || x < X_MIN) {
                 return false;
             }
