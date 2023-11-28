@@ -1,64 +1,67 @@
 package servlets;
 
-import beans.Point;
-import beans.PointsArray;
+import beans.Hit;
+import beans.Results;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
-@WebServlet(urlPatterns = "/ControllerServlet")
+@MultipartConfig
+@WebServlet(name = "controller", value = "/controller")
 public class ControllerServlet extends HttpServlet {
-
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        processRequest(request, response);
-    }
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        ServletContext context = getServletContext();
+        Results results = (Results) context.getAttribute("results");
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Этот метод может быть пустым, но он должен присутствовать
-    }
-
-    private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Извлекаем параметры запроса
-        String[] xValues = request.getParameterValues("x");
-        String yValue = request.getParameter("y");
-        String radiusValue = request.getParameter("radius");
-
-        // Проверяем, содержатся ли параметры запроса
-        if (xValues != null && yValue != null && radiusValue != null) {
-            try {
-                // Получаем или создаем объект PointsArray
-                PointsArray pointsArray = (PointsArray) request.getSession().getAttribute("pointsArray");
-                if (pointsArray == null) {
-                    pointsArray = new PointsArray();
-                    request.getSession().setAttribute("pointsArray", pointsArray);
-                }
-
-                // Добавляем каждую точку в PointsArray
-                for (String xValue : xValues) {
-                    double x = Double.parseDouble(xValue);
-                    double y = Double.parseDouble(yValue);
-                    double radius = Double.parseDouble(radiusValue);
-
-                    Point point = new Point(x, y, radius);
-                    pointsArray.addPoint(point);
-                }
-
-                // Передаем PointsArray в AreaCheckServlet
-                request.getRequestDispatcher("/AreaCheckServlet").forward(request, response);
-            } catch (NumberFormatException e) {
-                // Обработка ошибок парсинга чисел
-                e.printStackTrace(); // Лучше заменить на логирование
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid number format");
-            }
-        } else {
-            // Если параметры отсутствуют, перенаправляем на страницу с веб-формой
-            request.getRequestDispatcher("/index.jsp").forward(request, response);
+        if (results == null) {
+            results = new Results();
+            context.setAttribute("results", results);
         }
+
+        // Получаем параметры из объекта FormData
+        Map<String, String[]> parameterMap = req.getParameterMap();
+        String[] xValues = parameterMap.get("x");
+        String yValue = parameterMap.get("y")[0];
+        String rValue = parameterMap.get("r")[0];
+
+        // Переводим массив строк X в строку с разделителями, например, запятыми
+        String xStr = String.join(",", xValues);
+
+        long startTime = System.nanoTime();
+        results.setStartTime(startTime);  // Устанавливаем время начала в объекте Results
+
+        req.setAttribute("results", results);
+
+        if (yValue == null || rValue == null || xStr.isEmpty() || yValue.isEmpty() || rValue.isEmpty()) {
+            req.setAttribute("results", results);
+            context.getRequestDispatcher("/index.jsp").forward(req, resp);
+            return;
+        }
+
+        req.setAttribute("startTime", startTime);
+        req.setAttribute("results", results);
+        context.getRequestDispatcher("/areaCheck").forward(req, resp);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        ServletContext context = getServletContext();
+        Results results = (Results) context.getAttribute("results");
+
+        if (results == null) {
+            results = new Results();
+            context.setAttribute("results", results);
+        }
+
+        req.setAttribute("results", results);
+        context.getRequestDispatcher("/index.jsp").forward(req, resp);
     }
 }

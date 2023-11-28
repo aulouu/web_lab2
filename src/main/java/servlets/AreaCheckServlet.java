@@ -1,66 +1,98 @@
 package servlets;
 
-import beans.Point;
-import beans.PointsArray;
+import beans.Hit;
+import beans.Results;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
-@WebServlet("/AreaCheckServlet")
+@WebServlet(name = "areaCheck", value = "/areaCheck")
 public class AreaCheckServlet extends HttpServlet {
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        processRequest(request, response);
-    }
+
+    private static final double X_MIN = -5, X_MAX = 3;
+    private static final double Y_MIN = -3, Y_MAX = 3;
+    private static final double R_MIN = 1, R_MAX = 5;
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        processRequest(request, response);
-    }
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        ServletContext context = getServletContext();
+        String xStr = req.getParameter("x");
+        String yStr = req.getParameter("y");
+        String rStr = req.getParameter("r");
 
-    private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Извлекаем объект PointsArray из атрибутов запроса
-        PointsArray pointsArray = (PointsArray) request.getSession().getAttribute("pointsArray");
+        double y;
+        double r;
 
-        // Проверяем, что PointsArray не равен null и содержит точки
-        if (pointsArray != null && !pointsArray.getPoints().isEmpty()) {
-            // Выполняем вычисления для каждой точки
-            for (Point point : pointsArray.getPoints()) {
-                boolean isInside = checkIfInsideArea(point);
+        try {
+            y = Double.parseDouble(yStr);
+            r = Double.parseDouble(rStr);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Wrong type arguments!");
+        }
 
-                // Устанавливаем результаты в атрибуты запроса для передачи на JSP-страницу
-                request.setAttribute("point", point);
-                request.setAttribute("isInside", isInside);
+        // Разбиваем строку xStr на массив значений xValues
+        String[] xValues = xStr.split(",");
+
+        Results results = (Results) context.getAttribute("results");
+
+        long startTime = System.nanoTime();
+        // Проходим по каждому значению x
+        for (String xValue : xValues) {
+            double x;
+
+            try {
+                x = Double.parseDouble(xValue);
+            } catch (NumberFormatException e) {
+                // Обработка ошибок, если значение x не является числом
+                throw new RuntimeException("Invalid value for x: " + xValue);
             }
-        } else {
-            // Если PointsArray равен null или не содержит точек, устанавливаем значения по умолчанию
-            request.setAttribute("point", new Point());
-            request.setAttribute("isInside", false);
+
+            Hit hit = new Hit();
+            hit.setX(x);
+            hit.setY(y);
+            hit.setR(r);
+            hit.setResult(isHit(x, y, r));
+            hit.setCurrentTime(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss", Locale.forLanguageTag("RU"))));
+            DecimalFormat df = new DecimalFormat("#.###");
+            hit.setExecutionTime("" + (System.nanoTime() - startTime) * 0.001);
+            results.addHit(hit);
         }
 
-        // Перенаправляем запрос на JSP-страницу для отображения результатов
-        request.getRequestDispatcher("/index.jsp").forward(request, response);
+        req.setAttribute("results", results);
+        context.getRequestDispatcher("/result.jsp").forward(req, resp);
     }
-
-    private boolean checkIfInsideArea(Point point) {
-        double x = point.getX();
-        double y = point.getY();
-        double r = point.getRadius();
-
-        if (x >= 0 && y >= 0 && (x * x + y * y <= r * r)) {
-            return true;
-        } else if (x <= 0 && y >= 0 && (2 * x + r <= y)) {
-            return true;
-        } else if (x <= 0 && y <= 0 && (x >= -r && y >= (double) -r / 2)) {
-            return true;
-        } else if (x >= 0 && y <= 0 && (x <= r && y >= -r)) {
-            return true;
+        private boolean isHit ( double x, double y, double r){
+            if (x > X_MAX || x < X_MIN) {
+                return false;
+            }
+            if (y > Y_MAX || y < Y_MIN) {
+                return false;
+            }
+            if (r > R_MAX || r < R_MIN) {
+                return false;
+            }
+            return isCircle(x, y, r) || isRectangle(x, y, r) || isTriangle(x, y, r);
         }
-        return false;
-    }
+
+        private boolean isRectangle ( double x, double y, double r){
+            return y >= -r / 2 && x >= -r && x <= 0 && y <= 0;
+        }
+
+        private boolean isCircle ( double x, double y, double r){
+            return x * x + y * y <= r * r && x >= 0 && y >= 0;
+        }
+
+        private boolean isTriangle ( double x, double y, double r){
+            return x <= 0 && y >= 0 && y >= 2 * x + r;
+        }
 
 }
