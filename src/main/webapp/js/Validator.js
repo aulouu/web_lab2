@@ -2,39 +2,39 @@ export default class Validator {
     static regex = /^-?\d+(\.\d+)?$/;
 
     static isValid(x, y, r) {
-        return this.isValidX(x) && this.isValidY(y) && this.isValidR(r)
+        return this.isValidX(x) && this.isValidY(y) && this.isValidR(r);
     }
 
     static isValidR(val) {
-        return val.length !== 0;
+        const parsedValue = parseInt(val, 10);
+        return !isNaN(parsedValue) && parsedValue >= 1 && parsedValue <= 5;
     }
 
     static isValidX(val) {
-        if (typeof val === 'string') {
+        if (Array.isArray(val) && val.length > 0) {
+            // Если X - массив и не пуст, проверяем каждый элемент
+            return val.every(element => this.isValidXElement(element));
+        } else if (typeof val === 'string') {
             // Если x является строкой, разбиваем строку по запятой
             const values = val.split(',').map(element => element.trim()); // Разбиваем и удаляем пробелы
             return values.every(element => this.isValidXElement(element));
-        } else if (Array.isArray(val)) {
-            // Если x является массивом, просто проверяем каждый элемент
-            return val.every(element => this.isValidXElement(element));
         } else {
-            // Проверяем, является ли val числом и находится ли в пределах [-5, 3]
-            return  val >= -5 && val <= 3;
+            // X должен быть строкой или массивом, поэтому если это не строка или массив, или массив пуст, то возвращаем false
+            return false;
         }
     }
 
     static isValidXElement(val) {
-        // Проверяем, является ли val числом и находится ли в пределах [-5, 3]
+        // Проверяем, находится ли val в пределах [-5, 3]
         return val >= -5 && val <= 3;
     }
 
     static isValidY(val) {
-        if (Number(val) === 0) {
-            return true
+        if (typeof val !== 'string' && typeof val !== 'number') {
+            return false;
         }
-        if (!Number(val)) {
-            return false
-        }
-        return !(!Number(val) < -3 || !Number(val) > 3);
+        const numericY = parseFloat(val.toString().replace(',', '.'));
+
+        return !isNaN(numericY) && numericY >= -3 && numericY <= 3 && numericY.toString().length < 15;
     }
 }

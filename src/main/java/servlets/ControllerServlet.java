@@ -45,15 +45,15 @@ public class ControllerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ServletContext context = getServletContext();
-        Results results = (Results) context.getAttribute("results");
-
-        if (results == null) {
-            results = new Results();
-            context.setAttribute("results", results);
-        }
-
-        req.setAttribute("results", results);
-        context.getRequestDispatcher("/index.jsp").forward(req, resp);
+//        ServletContext context = getServletContext();
+//        Results results = (Results) context.getAttribute("results");
+//
+//        if (results == null) {
+//            results = new Results();
+//            context.setAttribute("results", results);
+//        }
+//
+//        req.setAttribute("results", results);
+        getServletContext().getRequestDispatcher("/index.jsp").forward(req, resp);
     }
 }

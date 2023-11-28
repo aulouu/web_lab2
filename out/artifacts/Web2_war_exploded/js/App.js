@@ -23,21 +23,9 @@ export default class App {
                     if (checkbox.checked) {
                         this.selectedXValues.push(checkbox.value);
                     } else {
-                        let index_i = 0;
                         const index = this.selectedXValues.indexOf(checkbox.value);
-                        for (let i = 0; i < xCheckboxes.length; i++) {
-                            if (xCheckboxes.item(i).value === checkbox.value) {
-                                index_i = i;
-                                break;
-                            }
-                        }
-
                         if (index !== -1) {
                             this.selectedXValues.splice(index, 1);
-                            if (this.selectedXValues.length === 0) {
-                                xCheckboxes.item(index_i).setCustomValidity("You must choose at least one value");
-                                xCheckboxes.item(index_i).reportValidity();
-                            }
                         }
                     }
                     submitBtn.disabled = !Validator.isValidX(this.selectedXValues);
@@ -48,7 +36,7 @@ export default class App {
                 const yValue = parseFloat(yInput.value.replace(',', '.')); // Заменим запятую на точку и преобразуем в число
                 submitBtn.disabled = !Validator.isValidY(yValue);
                 if (submitBtn.disabled || isNaN(yValue)) {
-                    yInput.setCustomValidity("Enter a valid number between -3 and 3 with max length 14");
+                    yInput.setCustomValidity("Enter a valid number between -3 and 3");
                     yInput.reportValidity();
                 } else {
                     yInput.setCustomValidity("");
@@ -59,21 +47,6 @@ export default class App {
         });
 
         this.submitButton.addEventListener('click', (event) => {
-            if (!Validator.isValid(this.selectedXValues, parseFloat(document.getElementById('y').value.replace(',', '.')), document.getElementById('r').value)) {
-                event.preventDefault();
-                if (!Validator.isValidY(parseFloat(document.getElementById('y').value.replace(',', '.')))){
-                    const yInput = document.getElementById('y');
-                    yInput.setCustomValidity("Enter a valid number between -3 and 3 with max length 14");
-                    yInput.reportValidity();
-                }
-                if (!Validator.isValidX(this.selectedXValues)) {
-                    const xCheckboxes = document.querySelectorAll("input[name='x']");
-                    xCheckboxes.item(0).setCustomValidity("You must choose at least one value");
-                    xCheckboxes.item(0).reportValidity();
-                }
-                return;
-            }
-
             event.preventDefault();
             const y = parseFloat(document.getElementById('y').value.replace(',', '.')); // Заменим запятую на точку и преобразуем в число
             const r = document.getElementById('r').value;
@@ -101,7 +74,6 @@ export default class App {
         this.resetButton.addEventListener('click', (event) => {
             event.preventDefault();
             this.table.innerHTML = '';
-
         });
 
         this.svgElem.addEventListener('click', (event) => {
@@ -128,5 +100,6 @@ export default class App {
                     document.write(data);
                 });
         });
+
     }
 }

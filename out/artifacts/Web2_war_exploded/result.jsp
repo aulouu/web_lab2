@@ -10,10 +10,7 @@
 </head>
 <body>
 <%
-    Results results = (Results)request.getSession().getAttribute("results");
-    if (results == null) {
-        request.getRequestDispatcher("/index.js").forward(request, response);
-    }
+    Results results = (Results)request.getAttribute("results");
     List<Hit> hits = results.getResults();
 
     // Проверка на наличие результатов
@@ -41,7 +38,7 @@
                 for (Hit hit : hits) {
                     if (lastTime.equals(hit.getCurrentTime())) {
             %>
-            <tr style="background-color: #f2deea">
+            <tr style="background-color: white">
                 <th><%= hit.getX() %></th>
                 <th><%= hit.getY() %></th>
                 <th><%= hit.getR() %></th>
