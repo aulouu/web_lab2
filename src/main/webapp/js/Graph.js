@@ -64,6 +64,23 @@ export default class Graph {
     }
 
     deleteDots() {
-        // Метод для удаления точек, если необходимо
+        const svg = document.querySelector('svg');
+        const svgns = "http://www.w3.org/2000/svg"
+        if (sessionStorage.getItem("dotsObjects")) {
+            JSON.parse(sessionStorage.getItem("dotsObjects")).forEach(value => {
+                const dot = JSON.parse(value);
+                const dotElement = document.createElementNS(svgns, 'circle');
+                dotElement.setAttributeNS(null, 'cx', dot.x);
+                dotElement.setAttributeNS(null, 'cy', dot.y);
+                dotElement.setAttributeNS(null, 'class', "target-dot");
+                dotElement.setAttributeNS(null, 'r', dot.radius.toString());
+                dotElement.setAttributeNS(null, 'style', 'fill: ' + (dot.isHit ? 'green' : 'red'));
+                svg.appendChild(dotElement);
+            });
+        }
+    }
+    clearDots() {
+        document.querySelectorAll("circle:not(#circle)").forEach(value => value.remove());
+        sessionStorage.removeItem("dotsObjects");
     }
 }

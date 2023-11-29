@@ -58,6 +58,11 @@ export default class App {
 
         });
 
+        this.resetButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            this.graph.clearDots();
+        })
+
         this.submitButton.addEventListener('click', (event) => {
             if (!Validator.isValid(this.selectedXValues, parseFloat(document.getElementById('y').value.replace(',', '.')), document.getElementById('r').value)) {
                 event.preventDefault();
