@@ -45,13 +45,22 @@ export default class App {
             });
 
             yInput.addEventListener('input', function () {
-                const yValue = parseFloat(yInput.value.replace(',', '.')); // Заменим запятую на точку и преобразуем в число
-                submitBtn.disabled = !Validator.isValidY(yValue);
-                if (submitBtn.disabled || isNaN(yValue)) {
-                    yInput.setCustomValidity("Enter a valid number between -3 and 3 with max length 14");
-                    yInput.reportValidity();
+                const inputValue = yInput.value;
+                const dotCount = (inputValue.match(/[.,]/g) || []).length;
+
+                if (dotCount <= 1) {
+                    const yValue = parseFloat(inputValue.replace(',', '.'));
+                    submitBtn.disabled = !Validator.isValidY(yValue);
+                    if (submitBtn.disabled || isNaN(yValue)) {
+                        yInput.setCustomValidity("Enter a valid number between -3 and 3 with exactly one decimal point");
+                        yInput.reportValidity();
+                    } else {
+                        yInput.setCustomValidity("");
+                        yInput.reportValidity();
+                    }
                 } else {
-                    yInput.setCustomValidity("");
+                    submitBtn.disabled = true;
+                    yInput.setCustomValidity("Enter a valid number between -3 and 3 with exactly one decimal point");
                     yInput.reportValidity();
                 }
             });

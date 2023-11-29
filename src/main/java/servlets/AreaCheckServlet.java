@@ -28,6 +28,14 @@ public class AreaCheckServlet extends HttpServlet {
         String yStr = req.getParameter("y");
         String rStr = req.getParameter("r");
 
+        // Разбиваем строку xStr на массив значений xValues
+        String[] xValues = xStr.split(",");
+
+        Results results = (Results) req.getSession().getAttribute("results");
+        if (results == null) {
+            results = new Results();
+        }
+
         double y;
         double r;
 
@@ -35,15 +43,9 @@ public class AreaCheckServlet extends HttpServlet {
             y = Double.parseDouble(yStr);
             r = Double.parseDouble(rStr);
         } catch (NumberFormatException e) {
-            throw new RuntimeException("Wrong type arguments!");
-        }
-
-        // Разбиваем строку xStr на массив значений xValues
-        String[] xValues = xStr.split(",");
-
-        Results results = (Results) req.getSession().getAttribute("results");
-        if (results == null) {
-            results = new Results();
+            req.getSession().setAttribute("results", results);
+            resp.sendRedirect(req.getContextPath() + "/error.jsp");
+            return;
         }
 
         if(y > Y_MAX || y < Y_MIN || Double.isNaN(y) || yStr.length() > 14 || r > R_MAX || r < R_MIN || Double.isNaN(r)) {
@@ -66,7 +68,9 @@ public class AreaCheckServlet extends HttpServlet {
                 }
             } catch (NumberFormatException e) {
                 // Обработка ошибок, если значение x не является числом
-                throw new RuntimeException("Invalid value for x: " + xValue);
+                req.getSession().setAttribute("results", results);
+                resp.sendRedirect(req.getContextPath() + "/error.jsp");
+                return;
             }
 
             Hit hit = new Hit();
@@ -75,7 +79,6 @@ public class AreaCheckServlet extends HttpServlet {
             hit.setR(r);
             hit.setResult(isHit(x, y, r));
             hit.setCurrentTime(ZonedDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss", Locale.forLanguageTag("RU"))));
-            DecimalFormat df = new DecimalFormat("#.###");
             hit.setExecutionTime("" + (System.nanoTime() - startTime) * 0.001);
             results.addHit(hit);
         }
