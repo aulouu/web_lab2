@@ -46,6 +46,12 @@ public class AreaCheckServlet extends HttpServlet {
             results = new Results();
         }
 
+        if(y > Y_MAX || y < Y_MIN || Double.isNaN(y) || yStr.length() > 14 || r > R_MAX || r < R_MIN || Double.isNaN(r)) {
+            req.getSession().setAttribute("results", results);
+            resp.sendRedirect(req.getContextPath() + "/error.jsp");
+            return;
+        }
+
         long startTime = System.nanoTime();
         // Проходим по каждому значению x
         for (String xValue : xValues) {
@@ -53,6 +59,11 @@ public class AreaCheckServlet extends HttpServlet {
 
             try {
                 x = Double.parseDouble(xValue);
+                if(x > X_MAX || x < X_MIN || Double.isNaN(x)) {
+                    req.getSession().setAttribute("results", results);
+                    resp.sendRedirect(req.getContextPath() + "/error.jsp");
+                    return;
+                }
             } catch (NumberFormatException e) {
                 // Обработка ошибок, если значение x не является числом
                 throw new RuntimeException("Invalid value for x: " + xValue);
