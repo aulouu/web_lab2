@@ -1,6 +1,4 @@
 export default class Validator {
-    static regex = /^-?\d+(\.\d+)?$/;
-
     static isValid(x, y, r) {
         return this.isValidX(x) && this.isValidY(y) && this.isValidR(r);
     }
@@ -34,7 +32,8 @@ export default class Validator {
             return false;
         }
         const numericY = parseFloat(val.toString().replace(',', '.'));
+        const dotCount = (numericY.toString().match(/\./g) || []).length;
 
-        return !isNaN(numericY) && numericY >= -3 && numericY <= 3 && numericY.toString().length < 15;
+        return !isNaN(numericY) && numericY >= -3 && numericY <= 3 && numericY.toString().length < 15 && dotCount === 1;
     }
 }
