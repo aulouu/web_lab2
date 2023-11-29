@@ -23,7 +23,8 @@ public class ControllerServlet extends HttpServlet {
         ServletContext context = getServletContext();
 //        String command = req.getParameter("command");
 //        if (command == "clear") {
-//            context.setAttribute("results", new Results());
+//            var userData = req.getServletContext().getAttribute("userData");
+//            context.setAttribute("results", null);
 //        }
         Results results = (Results) context.getAttribute("results");
 

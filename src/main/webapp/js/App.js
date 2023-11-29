@@ -58,14 +58,14 @@ export default class App {
 
         });
 
-        this.resetButton.addEventListener('click', event => {
-            event.preventDefault();
-            this.graph.clearDots();
-            // fetch("/controller?" + new URLSearchParams({command: "clear"}))
-            //     .then(r => {
-            //         return r.json();
-            //     })
-        })
+        // this.resetButton.addEventListener('click', event => {
+        //     event.preventDefault();
+        //     this.graph.clearDots();
+        //     fetch("/controller?" + new URLSearchParams({command: "clear"}))
+        //         .then(r => {
+        //             return r.text();
+        //     })
+        // })
 
         this.submitButton.addEventListener('click', (event) => {
             if (!Validator.isValid(this.selectedXValues, parseFloat(document.getElementById('y').value.replace(',', '.')), document.getElementById('r').value)) {
@@ -90,6 +90,7 @@ export default class App {
             // Use this.selectedXValues array instead of xInput.value
             const xValues = this.selectedXValues;
 
+            this.graph.clearDots();
             this.graph.drawDot(xValues, y, r, false, 100 / r);
 
             const formData = new FormData();
@@ -115,6 +116,7 @@ export default class App {
                 .inverse());
             const r = document.getElementById("r");
             const valOfDiv = 100 / r.value;
+            this.graph.clearDots();
             this.graph.drawDot([point.x.toString()], point.y, r.value, true, valOfDiv);
 
             const formData = new FormData();
