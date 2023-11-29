@@ -58,15 +58,19 @@ export default class App {
 
         });
 
-        this.resetButton.addEventListener('click', (event) => {
+        this.resetButton.addEventListener('click', event => {
             event.preventDefault();
             this.graph.clearDots();
+            // fetch("/controller?" + new URLSearchParams({command: "clear"}))
+            //     .then(r => {
+            //         return r.json();
+            //     })
         })
 
         this.submitButton.addEventListener('click', (event) => {
             if (!Validator.isValid(this.selectedXValues, parseFloat(document.getElementById('y').value.replace(',', '.')), document.getElementById('r').value)) {
                 event.preventDefault();
-                if (!Validator.isValidY(parseFloat(document.getElementById('y').value.replace(',', '.')))){
+                if (!Validator.isValidY(parseFloat(document.getElementById('y').value.replace(',', '.')))) {
                     const yInput = document.getElementById('y');
                     yInput.setCustomValidity("Enter a valid number between -3 and 3 with max length 14");
                     yInput.reportValidity();

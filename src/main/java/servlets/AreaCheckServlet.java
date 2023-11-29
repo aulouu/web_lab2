@@ -46,12 +46,6 @@ public class AreaCheckServlet extends HttpServlet {
             results = new Results();
         }
 
-        if(xStr == null || yStr == null || rStr == null || xStr.isEmpty() || yStr.isEmpty() || rStr.isEmpty() || y > Y_MAX || y < Y_MIN || Double.isNaN(y)) {
-            req.getSession().setAttribute("results", results);
-            resp.sendRedirect(req.getContextPath() + "/error.jsp");
-            return;
-        }
-
         long startTime = System.nanoTime();
         // Проходим по каждому значению x
         for (String xValue : xValues) {

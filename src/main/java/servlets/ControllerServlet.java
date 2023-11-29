@@ -13,12 +13,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
+
 @MultipartConfig
 @WebServlet(name = "controller", value = "/controller")
 public class ControllerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ServletContext context = getServletContext();
+//        String command = req.getParameter("command");
+//        if (command == "clear") {
+//            context.setAttribute("results", new Results());
+//        }
         Results results = (Results) context.getAttribute("results");
 
         if (results == null) {
@@ -37,6 +42,17 @@ public class ControllerServlet extends HttpServlet {
 
         long startTime = System.nanoTime();
         results.setStartTime(startTime);  // Устанавливаем время начала в объекте Results
+
+        req.setAttribute("results", results);
+
+        double x = Double.parseDouble(xStr);
+        double y = Double.parseDouble(yValue);
+        double r = Double.parseDouble(rValue);
+        if (xStr == null || yValue == null || rValue == null || xStr.isEmpty() || yValue.isEmpty() || rValue.isEmpty() || y > 3 || y < -3 || Double.isNaN(y) || yValue.length() > 14 || r > 5 || r < 1 || x > 3 || x < -5) {
+            req.getSession().setAttribute("results", results);
+            resp.sendRedirect(req.getContextPath() + "/error.jsp");
+            return;
+        }
 
         req.setAttribute("startTime", startTime);
         req.setAttribute("results", results);
