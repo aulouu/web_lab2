@@ -72,7 +72,7 @@
                              points="150,150 100,150 150,50"></polygon>
 
 
-                    <path d="M 150 50 A 150 150, 90, 0, 1, 250 150 L 150 150 Z"
+                    <path d="M 150 50 A 100 100, 90, 0, 1, 250 150 L 150 150 Z"
                           fill-opacity="0.5"
                           fill="#cc97ff"
                           stroke="#c282ff"></path>
