@@ -52,7 +52,7 @@ export default class App {
                     const yValue = parseFloat(inputValue.replace(',', '.'));
                     submitBtn.disabled = !Validator.isValidY(yValue);
                     if (submitBtn.disabled || isNaN(yValue)) {
-                        yInput.setCustomValidity("Enter a valid number between -3 and 3 with exactly one decimal point");
+                        yInput.setCustomValidity("Enter a valid number between -3 and 3 with max length 14");
                         yInput.reportValidity();
                     } else {
                         yInput.setCustomValidity("");
@@ -60,7 +60,7 @@ export default class App {
                     }
                 } else {
                     submitBtn.disabled = true;
-                    yInput.setCustomValidity("Enter a valid number between -3 and 3 with exactly one decimal point");
+                    yInput.setCustomValidity("Enter a valid number between -3 and 3 with maximum one decimal point");
                     yInput.reportValidity();
                 }
             });
@@ -81,7 +81,7 @@ export default class App {
                 event.preventDefault();
                 if (!Validator.isValidY(parseFloat(document.getElementById('y').value.replace(',', '.')))) {
                     const yInput = document.getElementById('y');
-                    yInput.setCustomValidity("Enter a valid number between -3 and 3 with max length 14");
+                    yInput.setCustomValidity("Enter a valid number between -3 and 3 with max length 14 and maximum one decimal point");
                     yInput.reportValidity();
                 }
                 if (!Validator.isValidX(this.selectedXValues)) {
