@@ -34,6 +34,6 @@ export default class Validator {
         const numericY = parseFloat(val.toString().replace(',', '.'));
         const dotCount = (numericY.toString().match(/\./g) || []).length;
 
-        return !isNaN(numericY) && numericY >= -3 && numericY <= 3 && numericY.toString().length < 15 && dotCount === 1;
+        return !isNaN(numericY) && numericY >= -3 && numericY <= 3 && numericY.toString().length < 15 && dotCount <= 1;
     }
 }
