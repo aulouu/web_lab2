@@ -47,8 +47,8 @@ public class ControllerServlet extends HttpServlet {
         req.setAttribute("results", results);
 
         if (xStr == null || yValue == null || rValue == null || xStr.isEmpty() || yValue.isEmpty() || rValue.isEmpty()) {
-            req.getSession().setAttribute("results", results);
-            resp.sendRedirect(req.getContextPath() + "/error.jsp");
+            req.setAttribute("results", results);
+            context.getRequestDispatcher("/error.jsp").forward(req, resp);
             return;
         }
 
