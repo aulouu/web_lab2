@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 
@@ -45,7 +46,7 @@ public class ControllerServlet extends HttpServlet {
 
         req.setAttribute("results", results);
 
-        double x = Double.parseDouble(xStr);
+        double x = Double.parseDouble(Arrays.toString(xValues));
         double y = Double.parseDouble(yValue);
         double r = Double.parseDouble(rValue);
         if (xStr == null || yValue == null || rValue == null || xStr.isEmpty() || yValue.isEmpty() || rValue.isEmpty() || y > 3 || y < -3 || Double.isNaN(y) || yValue.length() > 14 || r > 5 || r < 1 || x > 3 || x < -5) {
